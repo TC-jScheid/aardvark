@@ -167,6 +167,7 @@ class RoleSearch(Resource):
 
         try:
             if phrase:
+                print('Searching for {}'.format(phrase))
                 query = query.filter(AWSIAMObject.arn.ilike('%' + phrase + '%'))
 
             if arns:
