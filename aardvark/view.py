@@ -139,6 +139,7 @@ class RoleSearch(Resource):
           400:
             description: Bad request - error message in body
         """
+        print('Got post request')
         self.reqparse.add_argument('page', type=int, default=1)
         self.reqparse.add_argument('count', type=int, default=30)
         self.reqparse.add_argument('combine', type=str, default='false')
@@ -148,6 +149,7 @@ class RoleSearch(Resource):
         try:
             args = self.reqparse.parse_args()
         except Exception as e:
+            print('Hit 400 error {}'.format(e))
             abort(400, str(e))
 
         page = args.pop('page')
@@ -160,6 +162,7 @@ class RoleSearch(Resource):
         items = None
 
         # default unfiltered query
+        print('Querying...')
         query = AWSIAMObject.query
 
         try:
@@ -175,6 +178,7 @@ class RoleSearch(Resource):
 
             items = query.paginate(page, count)
         except Exception as e:
+            print('Hit 400 exception {}'.format(e))
             abort(400, str(e))
 
         if not items:
@@ -197,8 +201,9 @@ class RoleSearch(Resource):
         if combine and items.total > len(items.items):
             abort(400, "Error: Please specify a count of at least {}.".format(items.total))
         elif combine:
+            print('Returning combine')
             return self.combine(values)
-
+        print('Returning json values')
         return jsonify(values)
 
 
